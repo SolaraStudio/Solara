@@ -65,14 +65,20 @@ fun BrowserScreen() {
                             url?.let {
                                 currentUrl = it
                                 tabs = tabs.map { tab ->
-                                    if (tab.id == currentTabId) tab.copy(url = it)
-                                    else tab
+                                    if (tab.id == currentTabId) {
+                                        tab.copy(url = it)
+                                    } else {
+                                        tab
+                                    }
                                 }
                             }
                             view?.title?.let { title ->
                                 tabs = tabs.map { tab ->
-                                    if (tab.id == currentTabId) tab.copy(title = title)
-                                    else tab
+                                    if (tab.id == currentTabId) {
+                                        tab.copy(title = title)
+                                    } else {
+                                        tab
+                                    }
                                 }
                             }
                         }
@@ -81,8 +87,11 @@ fun BrowserScreen() {
                             url?.let {
                                 currentUrl = it
                                 tabs = tabs.map { tab ->
-                                    if (tab.id == currentTabId) tab.copy(url = it)
-                                    else tab
+                                    if (tab.id == currentTabId) {
+                                        tab.copy(url = it)
+                                    } else {
+                                        tab
+                                    }
                                 }
                                 view?.loadUrl(it)
                             }
@@ -98,8 +107,11 @@ fun BrowserScreen() {
                         override fun onReceivedTitle(view: WebView?, title: String?) {
                             title?.let {
                                 tabs = tabs.map { tab ->
-                                    if (tab.id == currentTabId) tab.copy(title = it)
-                                    else tab
+                                    if (tab.id == currentTabId) {
+                                        tab.copy(title = it)
+                                    } else {
+                                        tab
+                                    }
                                 }
                             }
                         }
@@ -125,8 +137,11 @@ fun BrowserScreen() {
                 }
                 currentUrl = finalUrl
                 tabs = tabs.map { tab ->
-                    if (tab.id == currentTabId) tab.copy(url = finalUrl)
-                    else tab
+                    if (tab.id == currentTabId) {
+                        tab.copy(url = finalUrl)
+                    } else {
+                        tab
+                    }
                 }
                 webView?.loadUrl(finalUrl)
             },

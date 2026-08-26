@@ -179,8 +179,11 @@ private fun TabItem(
             .height(48.dp)
             .clip(RoundedCornerShape(14.dp))
             .background(
-                color = if (isActive) Color(0xFF8B5CF6).copy(alpha = 0.2f)
-                else Color.Transparent
+                color = if (isActive) {
+                    Color(0xFF8B5CF6).copy(alpha = 0.2f)
+                } else {
+                    Color.Transparent
+                }
             )
             .clickable { onClick() }
             .padding(horizontal = 12.dp),
