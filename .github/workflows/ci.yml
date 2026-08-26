@@ -20,20 +20,23 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       app_version: ${{ steps.version.outputs.APP_VERSION }}
+      version_code: ${{ steps.version.outputs.VERSION_CODE }}
     steps:
       - uses: actions/checkout@v4
       - id: version
         run: |
+          BASE_VERSION=$(cat version.txt | head -1 | cut -d' ' -f1)
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             VERSION=$(echo "${{ github.ref }}" | sed 's/refs\/tags\/v//')
-          elif [[ "${{ github.ref }}" == refs/heads/main ]]; then
-            VERSION="1.10.0"
           elif [[ "${{ github.ref }}" == refs/heads/develop ]]; then
-            VERSION="1.10.0-dev.${GITHUB_RUN_NUMBER}"
+            VERSION="${BASE_VERSION}-dev"
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            VERSION="${BASE_VERSION}-pr"
           else
-            VERSION="1.10.0-dev.${GITHUB_RUN_NUMBER}"
+            VERSION="${BASE_VERSION}"
           fi
           echo "APP_VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version set to: $VERSION"
 
   lint:
     name: Lint
