@@ -1,0 +1,40 @@
+# Android
+*.apk
+*.aab
+*.keystore
+*.jks
+local.properties
+*.iml
+.idea/
+.gradle/
+build/
+android/build/
+android/app/build/
+android/app/release/
+android/app/debug/
+
+# Kotlin
+*.class
+*.jar
+
+# IDE
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.bak
+
+# Logs
+*.log
+
+# Gradle wrapper (keep the JAR, ignore others)
+!gradle/wrapper/gradle-wrapper.jar
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Version file (optional)
+version.txt
