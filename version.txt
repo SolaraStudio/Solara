@@ -1,0 +1,4 @@
+1.10.0 - # release
+1.10.0 - # pre-release
+1.10.0.0 - # beta
+1.100.0.0 - # dev
