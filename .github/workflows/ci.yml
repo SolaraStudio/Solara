@@ -77,12 +77,13 @@ jobs:
 
       - name: Commit formatting changes
         if: steps.check-format.outputs.formatted == 'true'
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Apply ktlint formatting [skip ci]"
-          commit_user_name: "Solara"
-          commit_user_email: "solarateam@proton.me"
-          token: ${{secrets.BOT_TOKEN}}
+        run: |
+          git config --global user.name "Solara"
+          git config --global user.email "solarateam@proton.me"
+          git add .
+          git commit -m "Apply ktlint formatting [skip ci]"
+          git push https://x-access-token:${{ secrets.BOT_TOKEN }}@github.com/SolaraStudio/Solara.git HEAD:master
+
       - run: cd android && ./gradlew ktlintCheck
       - run: cd android && ./gradlew lint
       - if: failure()
