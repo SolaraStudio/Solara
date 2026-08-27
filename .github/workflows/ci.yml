@@ -59,6 +59,32 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - run: chmod +x android/gradlew
+
+      # ---- Auto-formatting step ----
+      - name: Auto-format with ktlint
+        run: |
+          cd android
+          ./gradlew ktlintFormat
+        continue-on-error: false
+
+      - name: Check for formatting changes
+        id: check-format
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "formatted=true" >> $GITHUB_OUTPUT
+          else
+            echo "formatted=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit formatting changes
+        if: steps.check-format.outputs.formatted == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Apply ktlint formatting [skip ci]"
+          commit_user_name: "Solara Bot"
+          commit_user_email: "bot@solara.studio"
+      # ---- End of auto-formatting ----
+
       - run: cd android && ./gradlew ktlintCheck
       - run: cd android && ./gradlew lint
       - if: failure()
