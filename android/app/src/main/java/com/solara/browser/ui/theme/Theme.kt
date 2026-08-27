@@ -5,7 +5,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicColor
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -49,15 +50,10 @@ fun dynamicColorScheme(
 ): ColorScheme {
     val context = LocalContext.current
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        val dynamicColors = dynamicColor(context)
-        if (dynamicColors != null) {
-            if (darkTheme) {
-                dynamicColors.darkColorScheme()
-            } else {
-                dynamicColors.lightColorScheme()
-            }
+        if (darkTheme) {
+            dynamicDarkColorScheme(context) ?: DarkColorScheme
         } else {
-            if (darkTheme) DarkColorScheme else LightColorScheme
+            dynamicLightColorScheme(context) ?: LightColorScheme
         }
     } else {
         if (darkTheme) DarkColorScheme else LightColorScheme
