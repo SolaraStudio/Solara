@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -80,10 +81,11 @@ fun GlassUrlBar(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Security indicator
             Box(
                 modifier = Modifier
                     .size(8.dp)
@@ -93,6 +95,7 @@ fun GlassUrlBar(
                     )
             )
 
+            // URL input area
             Surface(
                 modifier = Modifier
                     .weight(1f)
@@ -158,6 +161,7 @@ fun GlassUrlBar(
                 }
             }
 
+            // Refresh button
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(20.dp),
@@ -178,6 +182,7 @@ fun GlassUrlBar(
                 }
             }
 
+            // Toggle tabs button
             IconButton(
                 onClick = onToggleTabs,
                 modifier = Modifier.size(32.dp)
