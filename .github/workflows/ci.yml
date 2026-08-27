@@ -81,9 +81,8 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Apply ktlint formatting [skip ci]"
-          commit_user_name: "Solara Bot"
-          commit_user_email: "bot@solara.studio"
-          commit_author: "frostre1997"
+          commit_user_name: "Solara"
+          commit_user_email: "solarateam@proton.me"
         env:
           GITHUB_TOKEN: ${{secrets.BOT_TOKEN}}
       - run: cd android && ./gradlew ktlintCheck
