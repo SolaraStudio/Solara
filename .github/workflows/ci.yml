@@ -78,8 +78,8 @@ jobs:
       - name: Commit formatting changes
         if: steps.check-format.outputs.formatted == 'true'
         run: |
-          git config --global user.name "Solara"
-          git config --global user.email "solarateam@proton.me"
+          git config --global user.name "frostre1997"
+          git config --global user.email "n9043395@gmail.com"
           git add .
           git commit -m "Apply ktlint formatting [skip ci]"
           git push https://x-access-token:${{ secrets.BOT_TOKEN }}@github.com/SolaraStudio/Solara.git HEAD:master
