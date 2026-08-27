@@ -51,8 +51,11 @@ fun dynamicColorScheme(
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val dynamicColors = dynamicColor(context)
         if (dynamicColors != null) {
-            if (darkTheme) dynamicColors.darkColorScheme()
-            else dynamicColors.lightColorScheme()
+            if (darkTheme) {
+                dynamicColors.darkColorScheme()
+            } else {
+                dynamicColors.lightColorScheme()
+            }
         } else {
             if (darkTheme) DarkColorScheme else LightColorScheme
         }
