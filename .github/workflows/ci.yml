@@ -82,7 +82,7 @@ jobs:
           commit_message: "Apply ktlint formatting [skip ci]"
           commit_user_name: "Solara"
           commit_user_email: "solarateam@proton.me"
-          GITHUB_TOKEN: ${{secrets.BOT_TOKEN}}
+          token: ${{secrets.BOT_TOKEN}}
       - run: cd android && ./gradlew ktlintCheck
       - run: cd android && ./gradlew lint
       - if: failure()
