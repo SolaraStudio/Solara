@@ -83,8 +83,9 @@ jobs:
           commit_message: "Apply ktlint formatting [skip ci]"
           commit_user_name: "Solara Bot"
           commit_user_email: "bot@solara.studio"
-      # ---- End of auto-formatting ----
-
+          commit_author: "frostre1997"
+        env:
+          GITHUB_TOKEN: ${{secrets.BOT_TOKEN}}
       - run: cd android && ./gradlew ktlintCheck
       - run: cd android && ./gradlew lint
       - if: failure()
