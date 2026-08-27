@@ -48,7 +48,7 @@ data class Tab(
     val id: String,
     val title: String,
     val url: String,
-    val isActive: Boolean = false
+    var isActive: Boolean = false
 )
 
 @Composable
@@ -95,6 +95,7 @@ fun VerticalTabs(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
+                // Header
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -122,6 +123,7 @@ fun VerticalTabs(
                     }
                 }
 
+                // Tab list
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -136,6 +138,7 @@ fun VerticalTabs(
                     }
                 }
 
+                // New Tab button
                 Button(
                     onClick = onNewTab,
                     modifier = Modifier
@@ -146,12 +149,7 @@ fun VerticalTabs(
                         containerColor = Color(0xFF8B5CF6).copy(alpha = 0.2f),
                         contentColor = Color.White
                     ),
-                    border = ButtonDefaults.outlinedButtonBorder(
-                        border = BorderStroke(
-                            1.dp,
-                            Color(0xFF8B5CF6).copy(alpha = 0.3f)
-                        )
-                    )
+                    border = BorderStroke(1.dp, Color(0xFF8B5CF6).copy(alpha = 0.3f))
                 ) {
                     Icon(
                         Icons.Default.Add,
@@ -179,11 +177,8 @@ private fun TabItem(
             .height(48.dp)
             .clip(RoundedCornerShape(14.dp))
             .background(
-                color = if (isActive) {
-                    Color(0xFF8B5CF6).copy(alpha = 0.2f)
-                } else {
-                    Color.Transparent
-                }
+                color = if (isActive) Color(0xFF8B5CF6).copy(alpha = 0.2f)
+                else Color.Transparent
             )
             .clickable { onClick() }
             .padding(horizontal = 12.dp),
