@@ -59,8 +59,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - run: chmod +x android/gradlew
-
-      # ---- Auto-formatting step ----
+      
       - name: Auto-format with ktlint
         run: |
           cd android
@@ -83,7 +82,6 @@ jobs:
           commit_message: "Apply ktlint formatting [skip ci]"
           commit_user_name: "Solara"
           commit_user_email: "solarateam@proton.me"
-        env:
           GITHUB_TOKEN: ${{secrets.BOT_TOKEN}}
       - run: cd android && ./gradlew ktlintCheck
       - run: cd android && ./gradlew lint
