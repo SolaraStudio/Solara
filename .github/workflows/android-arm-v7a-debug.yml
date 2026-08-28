@@ -1,4 +1,4 @@
-name: arm-v7a - release
+name: arm-v7a - debug
 
 on:
   workflow_call:
