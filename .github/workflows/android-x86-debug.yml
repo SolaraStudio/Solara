@@ -1,10 +1,16 @@
 name: x86 - debug
 
 on:
-  workflow_dispatch:
-  push:
-    branches: [ develop ]
   workflow_call:
+    inputs:
+      app_version:
+        description: "App version"
+        required: true
+        type: string
+      version_type:
+        description: "Version type"
+        required: true
+        type: string
 
 jobs:
   build:
@@ -40,6 +46,6 @@ jobs:
           cp app/build/outputs/apk/debug/*.apk solara-${DISPLAY}-debug.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: solara-x86-debug
+          name: solara-x86-debug-${{ inputs.app_version }}
           path: android/solara-x86-debug.apk
           retention-days: 30
