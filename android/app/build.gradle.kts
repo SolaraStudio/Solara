@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
 }
 
 android {
@@ -12,7 +11,6 @@ android {
         applicationId = "com.solara.browser"
         minSdk = 24
         targetSdk = 35
-
         versionCode = generateVersionCode()
         versionName = getVersionName()
     }
@@ -58,19 +56,20 @@ dependencies {
 
     implementation("androidx.webkit:webkit:1.12.1")
 
+    // Optima (from GitHub Packages)
+    val optimaVersion = project.findProperty("optimaVersion") as? String ?: "0.150.10-dev"
+    implementation("org.optima:optima:$optimaVersion")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
 }
 
 fun getVersionName(): String {
-    // 1. Use environment variable if set (CI)
     System.getenv("APP_VERSION")?.let { return it }
-
-    // 2. Read from version.txt
     val versionFile = File("../version.txt")
     return if (versionFile.exists()) {
-        val firstLine = versionFile.readLines().firstOrNull() ?: "1.10.0"
-        firstLine.split("-")[0].trim()
+        val firstLine = versionFile.readLines().firstOrNull()?.trim() ?: "1.10.0"
+        firstLine
     } else {
         "1.10.0"
     }
@@ -78,16 +77,14 @@ fun getVersionName(): String {
 
 fun generateVersionCode(): Int {
     val version = getVersionName()
-    // Split version into parts (ignoring suffix like -dev, -beta, etc.)
     val base = version.split("-")[0].split(".").map { it.toIntOrNull() ?: 0 }
     val major = base.getOrElse(0) { 0 }
     val minor = base.getOrElse(1) { 0 }
     val patch = base.getOrElse(2) { 0 }
+    val build = base.getOrElse(3) { 0 }
 
-    // Base code: major * 1,000,000 + minor * 10,000 + patch * 100
-    var code = major * 1000000 + minor * 10000 + patch * 100
+    var code = major * 1000000 + minor * 10000 + patch * 100 + build
 
-    // Add offset based on suffix
     val suffix = version.split("-").getOrElse(1) { "release" }
     code += when {
         suffix.startsWith("rc") -> 80
@@ -98,13 +95,4 @@ fun generateVersionCode(): Int {
     }
 
     return code
-}
-
-ktlint {
-    android = true
-    ignoreFailures = false
-    reporters {
-        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
-        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
-    }
 }
