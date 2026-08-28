@@ -30,16 +30,19 @@ jobs:
         run: |
           mkdir -p release debug
           for apk in artifacts/solara-*/solara-*.apk; do
-            if [[ "$apk" == *-release.apk ]]; then
+            filename=$(basename "$apk")
+            if [[ "$filename" == *-release.apk ]]; then
               cp "$apk" release/
-            elif [[ "$apk" == *-debug.apk ]]; then
+            elif [[ "$filename" == *-debug.apk ]]; then
               cp "$apk" debug/
             else
-              # Fallback: check filename for "release" or "debug"
-              if [[ "$(basename "$apk")" == *release* ]]; then
-                cp "$apk" release/
-              elif [[ "$(basename "$apk")" == *debug* ]]; then
-                cp "$apk" debug/
+              # fallback: check if it's universal
+              if [[ "$filename" == *universal* ]]; then
+                if [[ "$filename" == *release* || "$filename" == *pre-release* ]]; then
+                  cp "$apk" release/
+                else
+                  cp "$apk" debug/
+                fi
               fi
             fi
           done
@@ -66,6 +69,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           for apk in release/*.apk debug/*.apk; do
+            [ -f "$apk" ] || continue
             jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
               -keystore keystore.jks \
               -storepass $KEYSTORE_PASSWORD \
