@@ -2,11 +2,11 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ master, develop ]
     tags:
       - 'v*'
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
   workflow_dispatch:
     inputs:
       version_type:
@@ -112,7 +112,7 @@ jobs:
           name: unit-test-reports
           path: android/app/build/reports/tests/
           retention-days: 7
-          
+
   call-arm-v7a-release:
     name: Build arm-v7a release
     needs: [version, lint, test]
@@ -153,7 +153,6 @@ jobs:
       version_type: ${{ needs.version.outputs.version_type }}
     secrets: inherit
 
-  # Debug ABIs (only for dev, beta, pre-release)
   call-arm-v7a-debug:
     name: Build arm-v7a debug
     needs: [version, lint, test]
@@ -194,7 +193,6 @@ jobs:
       version_type: ${{ needs.version.outputs.version_type }}
     secrets: inherit
 
-  # Universal build (after all ABIs)
   call-universal:
     name: Build universal
     needs:
@@ -214,7 +212,6 @@ jobs:
       version_type: ${{ needs.version.outputs.version_type }}
     secrets: inherit
 
-  # Final release (after universal)
   call-release:
     name: Create draft release
     needs: [version, call-universal]
