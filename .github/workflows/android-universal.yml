@@ -36,33 +36,52 @@ jobs:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*') }}
       - run: chmod +x android/gradlew
+
       - name: Build universal APK
-        env:
-          VERSION_TYPE: ${{ inputs.version_type }}
         run: |
           cd android
+          # Build both variants
+          ./gradlew assembleRelease
+          ./gradlew assembleDebug
+
+          # Find the APK files
+          RELEASE_APK=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
+          DEBUG_APK=$(find app/build/outputs/apk/debug -name "*.apk" | head -1)
+
+          if [ -z "$RELEASE_APK" ]; then
+            echo "Release APK not found!"
+            exit 1
+          fi
+          if [ -z "$DEBUG_APK" ]; then
+            echo "Debug APK not found!"
+            exit 1
+          fi
+
+          VERSION_TYPE="${{ inputs.version_type }}"
+          echo "Version type: $VERSION_TYPE"
+
           case "$VERSION_TYPE" in
             "release")
-              ./gradlew assembleRelease
-              cp app/build/outputs/apk/release/*.apk solara-universal-release.apk
+              cp "$RELEASE_APK" solara-universal-release.apk
               ;;
             "pre-release")
-              ./gradlew assembleRelease
-              cp app/build/outputs/apk/release/*.apk solara-universal-pre-release.apk
-              ./gradlew assembleDebug
-              cp app/build/outputs/apk/debug/*.apk solara-universal-pre-release.apk
+              cp "$RELEASE_APK" solara-universal-pre-release.apk
+              cp "$DEBUG_APK" solara-universal-pre-release.apk
               ;;
             "dev")
-              ./gradlew assembleDebug
-              cp app/build/outputs/apk/debug/*.apk solara-universal-dev.apk
+              cp "$DEBUG_APK" solara-universal-dev.apk
               ;;
             "beta")
-              ./gradlew assembleDebug
-              cp app/build/outputs/apk/debug/*.apk solara-universal-beta.apk
+              cp "$DEBUG_APK" solara-universal-beta.apk
+              ;;
+            *)
+              echo "Unknown version type: $VERSION_TYPE"
+              exit 1
               ;;
           esac
+
       - uses: actions/upload-artifact@v4
         with:
           name: solara-universal-${{ inputs.version_type }}-${{ inputs.app_version }}
-          path: android/solara-universal-${{ inputs.version_type }}.apk
+          path: android/solara-universal-*.apk
           retention-days: 30
