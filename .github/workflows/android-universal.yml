@@ -1,0 +1,68 @@
+name: universal
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, develop ]
+  workflow_call:
+    inputs:
+      version_type:
+        description: "Version type"
+        required: true
+        type: string
+        default: "release"
+
+jobs:
+  build:
+    name: Build universal (${{ inputs.version_type }})
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+      JAVA_VERSION: 17
+      GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx2048m -Dorg.gradle.daemon=false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools platforms;android-35 build-tools;35.0.0
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*') }}
+      - run: chmod +x android/gradlew
+      - name: Build universal APK
+        env:
+          VERSION_TYPE: ${{ inputs.version_type }}
+        run: |
+          cd android
+          case "$VERSION_TYPE" in
+            "release")
+              ./gradlew assembleRelease
+              cp app/build/outputs/apk/release/*.apk solara-universal-release.apk
+              ;;
+            "pre-release")
+              ./gradlew assembleRelease
+              cp app/build/outputs/apk/release/*.apk solara-universal-pre-release.apk
+              ./gradlew assembleDebug
+              cp app/build/outputs/apk/debug/*.apk solara-universal-pre-release.apk
+              ;;
+            "dev")
+              ./gradlew assembleDebug
+              cp app/build/outputs/apk/debug/*.apk solara-universal-dev.apk
+              ;;
+            "beta")
+              ./gradlew assembleDebug
+              cp app/build/outputs/apk/debug/*.apk solara-universal-beta.apk
+              ;;
+          esac
+      - uses: actions/upload-artifact@v4
+        with:
+          name: solara-universal-${{ inputs.version_type }}
+          path: android/solara-universal-${{ inputs.version_type }}.apk
+          retention-days: 30
