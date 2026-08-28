@@ -1,87 +1,21 @@
-name: release
+name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
-  workflow_dispatch:
+  workflow_call:
     inputs:
+      app_version:
+        description: "App version"
+        required: true
+        type: string
       version_type:
         description: "Version type"
         required: true
-        default: "release"
-        type: choice
-        options:
-          - release
-          - pre-release
-          - beta
-          - dev
+        type: string
 
 jobs:
-  version:
-    name: Set version
-    runs-on: ubuntu-latest
-    outputs:
-      app_version: ${{ steps.version.outputs.APP_VERSION }}
-      version_type: ${{ steps.version.outputs.VERSION_TYPE }}
-    steps:
-      - uses: actions/checkout@v4
-      - id: version
-        run: |
-          RELEASE_VERSION=$(grep "release" version.txt | head -1 | cut -d' ' -f1)
-          PRERELEASE_VERSION=$(grep "pre-release" version.txt | head -1 | cut -d' ' -f1)
-          BETA_VERSION=$(grep "beta" version.txt | head -1 | cut -d' ' -f1)
-          DEV_VERSION=$(grep "dev" version.txt | head -1 | cut -d' ' -f1)
-
-          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            TAG_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/tags\/v//')
-            if [[ "$TAG_NAME" == *-rc* ]] || [[ "$TAG_NAME" == *-pre* ]]; then
-              VERSION="$PRERELEASE_VERSION-rc"
-              TYPE="pre-release"
-            elif [[ "$TAG_NAME" == *-beta* ]]; then
-              VERSION="$BETA_VERSION-beta"
-              TYPE="beta"
-            else
-              VERSION="$RELEASE_VERSION"
-              TYPE="release"
-            fi
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            TYPE="${{ inputs.version_type }}"
-            case "$TYPE" in
-              "release") VERSION="$RELEASE_VERSION" ;;
-              "pre-release") VERSION="$PRERELEASE_VERSION-rc" ;;
-              "beta") VERSION="$BETA_VERSION-beta" ;;
-              "dev") VERSION="$DEV_VERSION-dev" ;;
-            esac
-          else
-            VERSION="$RELEASE_VERSION"
-            TYPE="release"
-          fi
-
-          echo "APP_VERSION=$VERSION" >> $GITHUB_OUTPUT
-          echo "VERSION_TYPE=$TYPE" >> $GITHUB_OUTPUT
-
-  build-per-abi:
-    name: Build per-ABI
-    uses: ./.github/workflows/android-per-abi-release.yml
-    needs: version
-    with:
-      app_version: ${{ needs.version.outputs.app_version }}
-      version_type: ${{ needs.version.outputs.version_type }}
-    secrets: inherit
-
-  build-universal:
-    name: Build universal
-    uses: ./.github/workflows/android-universal.yml
-    needs: version
-    with:
-      version_type: ${{ needs.version.outputs.version_type }}
-    secrets: inherit
-
   sign-and-release:
     name: Sign and create draft release
     runs-on: ubuntu-latest
-    needs: [version, build-per-abi, build-universal]
     permissions:
       contents: write
     env:
@@ -123,8 +57,8 @@ jobs:
           files: artifacts/**/*-signed.apk
           generate_release_notes: true
           draft: true
-          prerelease: ${{ needs.version.outputs.version_type != 'release' }}
-          name: Solara ${{ needs.version.outputs.app_version }}
+          prerelease: ${{ inputs.version_type != 'release' }}
+          name: Solara ${{ inputs.app_version }}
           tag_name: ${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
