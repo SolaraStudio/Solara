@@ -1,11 +1,16 @@
 name: arm-v8a - release
 
 on:
-  workflow_dispatch:
-  push:
-    tags:
-      - 'v*'
   workflow_call:
+    inputs:
+      app_version:
+        description: "App version"
+        required: true
+        type: string
+      version_type:
+        description: "Version type"
+        required: true
+        type: string
 
 jobs:
   build:
@@ -41,6 +46,6 @@ jobs:
           cp app/build/outputs/apk/release/*.apk solara-${DISPLAY}-release.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: solara-arm-v8a-release
+          name: solara-arm-v8a-release-${{ inputs.app_version }}
           path: android/solara-arm-v8a-release.apk
           retention-days: 30
