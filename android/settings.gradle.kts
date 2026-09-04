@@ -1,3 +1,13 @@
+fun localProperty(key: String): String? {
+    val properties = java.util.Properties()
+    val localFile = File(rootDir, "local.properties")
+    if (localFile.exists()) {
+        properties.load(localFile.inputStream())
+        return properties.getProperty(key)
+    }
+    return null
+}
+
 pluginManagement {
     repositories {
         google()
@@ -31,13 +41,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Solara"
 include(":app")
-
-fun localProperty(key: String): String? {
-    val properties = java.util.Properties()
-    val localFile = File(rootDir, "local.properties")
-    if (localFile.exists()) {
-        properties.load(localFile.inputStream())
-        return properties.getProperty(key)
-    }
-    return null
-}
