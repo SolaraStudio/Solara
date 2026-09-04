@@ -7,7 +7,6 @@ pluginManagement {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/SolaraStudio/Optima")
             credentials {
-                // Read from environment (CI) or local.properties (local)
                 username = System.getenv("GITHUB_ACTOR") ?: localProperty("gpr.user")
                 password = System.getenv("GITHUB_TOKEN") ?: localProperty("gpr.key")
             }
