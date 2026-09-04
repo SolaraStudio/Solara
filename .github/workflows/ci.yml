@@ -164,7 +164,7 @@ jobs:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
         with:
           packages: platform-tools platforms;android-36 build-tools;36.0.0
       - name: Cache Gradle
@@ -208,7 +208,7 @@ jobs:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
         with:
           packages: platform-tools platforms;android-36 build-tools;36.0.0
       - name: Cache Gradle
@@ -255,7 +255,7 @@ jobs:
           distribution: temurin
           java-version: 17
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
         with:
           packages: platform-tools platforms;android-36 build-tools;36.0.0
       - name: Decrypt signing key
