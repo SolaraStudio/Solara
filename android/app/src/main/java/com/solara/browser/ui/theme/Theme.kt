@@ -12,11 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-val SolaraPurple = Color(0xFF8B5CF6)
-val SolaraPurpleDark = Color(0xFF6D28D9)
-val SolaraPurpleLight = Color(0xFFC4B5FD)
-val SolaraBackgroundDark = Color(0xFF0F0F1A)
-val SolaraSurfaceDark = Color(0xFF1A1A2E)
+val SolaraPurple = Color(0xFF7C5CFC)
+val SolaraPurpleDark = Color(0xFF5A3FD9)
+val SolaraPurpleLight = Color(0xFFA78BFA)
+val SolaraBackgroundDark = Color(0xFF08080F)
+val SolaraSurfaceDark = Color(0xFF16162A)
 val SolaraBackgroundLight = Color(0xFFF8F8FC)
 val SolaraSurfaceLight = Color(0xFFFFFFFF)
 
@@ -40,8 +40,8 @@ private val LightColorScheme = lightColorScheme(
     surface = SolaraSurfaceLight,
     onPrimary = Color.White,
     onSecondary = Color.White,
-    onBackground = Color(0xFF1A1A2E),
-    onSurface = Color(0xFF1A1A2E)
+    onBackground = Color(0xFF08080F),
+    onSurface = Color(0xFF08080F)
 )
 
 @Composable

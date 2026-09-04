@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.solara.browser.ui.theme.SolaraColors
 
 @Composable
 fun GlassUrlBar(
@@ -56,52 +57,43 @@ fun GlassUrlBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(64.dp)
+            .height(56.dp)
             .shadow(
-                elevation = 24.dp,
-                shape = RoundedCornerShape(36.dp),
+                elevation = 16.dp,
+                shape = RoundedCornerShape(28.dp),
                 clip = false,
-                ambientColor = Color(0x1EFFB84D),
-                spotColor = Color(0x1EFFB84D)
+                ambientColor = SolaraColors.Accent.copy(alpha = 0.06f),
+                spotColor = SolaraColors.Accent.copy(alpha = 0.06f)
             )
-            .clip(RoundedCornerShape(36.dp))
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = 0.15f),
-                        Color.White.copy(alpha = 0.05f)
-                    )
-                )
-            )
+            .clip(RoundedCornerShape(28.dp))
+            .background(brush = SolaraColors.SolaraColors.UrlBarGradient)
             .border(
                 width = 1.dp,
-                color = Color.White.copy(alpha = 0.25f),
-                shape = RoundedCornerShape(36.dp)
+                color = SolaraColors.GlassBorder,
+                shape = RoundedCornerShape(28.dp)
             )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Security indicator
             Box(
                 modifier = Modifier
-                    .size(8.dp)
+                    .padding(start = 12.dp)
+                    .size(7.dp)
                     .background(
-                        color = if (url.startsWith("https://")) Color(0xFF4ADE80) else Color(0xFFF87171),
+                        color = if (url.startsWith("https://")) SolaraColors.Success else SolaraColors.Error,
                         shape = CircleShape
                     )
             )
 
-            // URL input area
             Surface(
                 modifier = Modifier
                     .weight(1f)
                     .height(40.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(Color.Transparent),
+                    .clip(RoundedCornerShape(20.dp)),
                 color = Color.Transparent,
                 onClick = { isFocused = true }
             ) {
@@ -111,27 +103,27 @@ fun GlassUrlBar(
                         onValueChange = { inputText = it },
                         modifier = Modifier.fillMaxWidth(),
                         textStyle = TextStyle(
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.W500
+                            color = SolaraColors.TextPrimary,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.W400
                         ),
                         placeholder = {
                             Text(
-                                "Enter URL",
-                                color = Color.White.copy(alpha = 0.5f),
-                                fontSize = 16.sp
+                                "Search or enter URL",
+                                color = SolaraColors.TextGhost,
+                                fontSize = 15.sp
                             )
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color.White.copy(alpha = 0.3f),
+                            focusedBorderColor = SolaraColors.Accent.copy(alpha = 0.3f),
                             unfocusedBorderColor = Color.Transparent,
-                            cursorColor = Color.White,
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White,
-                            focusedContainerColor = Color.White.copy(alpha = 0.1f),
+                            cursorColor = SolaraColors.Accent,
+                            focusedTextColor = SolaraColors.TextPrimary,
+                            unfocusedTextColor = SolaraColors.TextPrimary,
+                            focusedContainerColor = SolaraColors.Surface.copy(alpha = 0.5f),
                             unfocusedContainerColor = Color.Transparent,
-                            focusedPlaceholderColor = Color.White.copy(alpha = 0.5f),
-                            unfocusedPlaceholderColor = Color.White.copy(alpha = 0.5f)
+                            focusedPlaceholderColor = SolaraColors.TextGhost,
+                            unfocusedPlaceholderColor = SolaraColors.TextGhost
                         ),
                         shape = RoundedCornerShape(20.dp),
                         singleLine = true,
@@ -151,47 +143,47 @@ fun GlassUrlBar(
                 } else {
                     Text(
                         text = url,
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W500,
+                        color = SolaraColors.TextSecondary,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.W400,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 8.dp)
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
                     )
                 }
             }
 
-            // Refresh button
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = Color.White.copy(alpha = 0.8f),
+                    modifier = Modifier
+                        .padding(end = 4.dp)
+                        .size(18.dp),
+                    color = SolaraColors.Accent,
                     strokeWidth = 2.dp
                 )
             } else {
                 IconButton(
                     onClick = onRefresh,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
                         Icons.Default.Refresh,
                         contentDescription = "Refresh",
-                        tint = Color.White.copy(alpha = 0.8f),
-                        modifier = Modifier.size(20.dp)
+                        tint = SolaraColors.TextTertiary,
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             }
 
-            // Toggle tabs button
             IconButton(
                 onClick = onToggleTabs,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(36.dp)
             ) {
                 Icon(
                     Icons.Default.Menu,
-                    contentDescription = "Toggle tabs",
-                    tint = Color.White.copy(alpha = 0.7f),
-                    modifier = Modifier.size(24.dp)
+                    contentDescription = "Tabs",
+                    tint = SolaraColors.TextTertiary,
+                    modifier = Modifier.size(20.dp)
                 )
             }
         }
