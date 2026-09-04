@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.solara.browser"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.solara.browser"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = generateVersionCode()
         versionName = getVersionName()
     }
@@ -56,7 +56,6 @@ dependencies {
 
     implementation("androidx.webkit:webkit:1.12.1")
 
-    // Optima (from GitHub Packages)
     val optimaVersion = project.findProperty("optimaVersion") as? String ?: "0.150.10-dev"
     implementation("org.optima:optima:$optimaVersion")
 
@@ -68,8 +67,7 @@ fun getVersionName(): String {
     System.getenv("APP_VERSION")?.let { return it }
     val versionFile = File("../version.txt")
     return if (versionFile.exists()) {
-        val firstLine = versionFile.readLines().firstOrNull()?.trim() ?: "1.10.0"
-        firstLine
+        versionFile.readLines().firstOrNull()?.trim() ?: "1.10.0"
     } else {
         "1.10.0"
     }
