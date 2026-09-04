@@ -109,7 +109,7 @@ jobs:
       - run: cd android && ./gradlew ktlintCheck || true
       - run: cd android && ./gradlew lint || true
       - if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lint-reports
           path: android/app/build/reports/
@@ -133,7 +133,7 @@ jobs:
       - run: chmod +x android/gradlew
       - run: cd android && ./gradlew testDebugUnitTest || true
       - if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: unit-test-reports
           path: android/app/build/reports/tests/
@@ -188,7 +188,7 @@ jobs:
             ./gradlew assembleDebug -Pabi="$ABI"
             cp app/build/outputs/apk/debug/*.apk "solara-${APP_VERSION}-${DISPLAY}-debug.apk" || true
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: solara-${{ matrix.display }}-${{ matrix.build-type }}-${{ needs.version.outputs.app_version }}
           path: android/solara-*.apk
@@ -230,7 +230,7 @@ jobs:
             ./gradlew assembleDebug
             cp app/build/outputs/apk/debug/*.apk "solara-universal-${APP_VERSION}-debug.apk" || true
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: solara-universal-${{ matrix.build-type }}-${{ needs.version.outputs.app_version }}
           path: android/solara-universal-*.apk
