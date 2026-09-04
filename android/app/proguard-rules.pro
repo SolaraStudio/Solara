@@ -19,9 +19,9 @@
 -keep class androidx.compose.animation.** { *; }
 -dontwarn androidx.compose.**
 
-# Keep WebView
--keep class android.webkit.** { *; }
--keep class androidx.webkit.** { *; }
+# Optima
+-keep class org.optima.** { *; }
+-keepclasseswithmembernames class org.optima.** { native <methods>; }
 
 # Keep Kotlin reflection
 -keep class kotlin.reflect.** { *; }
