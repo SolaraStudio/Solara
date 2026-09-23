@@ -1,0 +1,93 @@
+name: Release
+
+on:
+  workflow_call:
+    inputs:
+      app_version:
+        description: "App version"
+        required: true
+        type: string
+      version_type:
+        description: "Version type"
+        required: true
+        type: string
+
+jobs:
+  sign-and-release:
+    name: Sign and create draft release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+
+      - name: Organize APKs by type
+        run: |
+          mkdir -p release debug
+          for apk in artifacts/solara-*/solara-*.apk; do
+            filename=$(basename "$apk")
+            if [[ "$filename" == *-release.apk ]]; then
+              cp "$apk" release/
+            elif [[ "$filename" == *-debug.apk ]]; then
+              cp "$apk" debug/
+            else
+              # fallback: check if it's universal
+              if [[ "$filename" == *universal* ]]; then
+                if [[ "$filename" == *release* || "$filename" == *pre-release* ]]; then
+                  cp "$apk" release/
+                else
+                  cp "$apk" debug/
+                fi
+              fi
+            fi
+          done
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools platforms;android-35 build-tools;35.0.0
+
+      - name: Decrypt signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 -d > keystore.jks
+
+      - name: Sign all APKs
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          for apk in release/*.apk debug/*.apk; do
+            [ -f "$apk" ] || continue
+            jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
+              -keystore keystore.jks \
+              -storepass $KEYSTORE_PASSWORD \
+              -keypass $KEY_PASSWORD \
+              "$apk" $KEY_ALIAS
+            $ANDROID_HOME/build-tools/35.0.0/zipalign -v -p 4 "$apk" "${apk%.apk}-signed.apk"
+          done
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/*-signed.apk
+            debug/*-signed.apk
+          generate_release_notes: true
+          draft: true
+          prerelease: ${{ inputs.version_type != 'release' }}
+          name: Solara ${{ inputs.app_version }}
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

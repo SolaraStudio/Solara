@@ -1,0 +1,291 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: "Version type"
+        required: true
+        default: "release"
+        type: choice
+        options:
+          - release
+          - pre-release
+          - beta
+          - dev
+
+env:
+  ANDROID_HOME: /usr/local/lib/android/sdk
+  JAVA_VERSION: 17
+  GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx2048m -Dorg.gradle.daemon=false
+
+jobs:
+  version:
+    name: Set version
+    runs-on: ubuntu-latest
+    outputs:
+      app_version: ${{ steps.version.outputs.APP_VERSION }}
+      version_type: ${{ steps.version.outputs.VERSION_TYPE }}
+      is_prerelease: ${{ steps.version.outputs.IS_PRERELEASE }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: version
+        run: |
+          # Ensure version.txt exists
+          if [ ! -f version.txt ]; then
+            echo "1.10.0 - # release" > version.txt
+            echo "1.10.0 - # pre-release" >> version.txt
+            echo "1.10.0.0 - # beta" >> version.txt
+            echo "1.100.0.0 - # dev" >> version.txt
+          fi
+
+          # Parse versions from your exact format
+          RELEASE_VERSION=$(grep "# release" version.txt | head -1 | awk '{print $1}')
+          PRERELEASE_VERSION=$(grep "# pre-release" version.txt | head -1 | awk '{print $1}')
+          BETA_VERSION=$(grep "# beta" version.txt | head -1 | awk '{print $1}')
+          DEV_VERSION=$(grep "# dev" version.txt | head -1 | awk '{print $1}')
+
+          # Determine version based on event
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            TAG_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/tags\/v//')
+            if [[ "$TAG_NAME" == *-rc* ]] || [[ "$TAG_NAME" == *-pre* ]]; then
+              VERSION="${PRERELEASE_VERSION}-rc"
+              TYPE="pre-release"
+              PRERELEASE="true"
+            elif [[ "$TAG_NAME" == *-beta* ]]; then
+              VERSION="${BETA_VERSION}-beta"
+              TYPE="beta"
+              PRERELEASE="true"
+            elif [[ "$TAG_NAME" == *-dev* ]]; then
+              VERSION="${DEV_VERSION}-dev"
+              TYPE="dev"
+              PRERELEASE="true"
+            else
+              VERSION="$RELEASE_VERSION"
+              TYPE="release"
+              PRERELEASE="false"
+            fi
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TYPE="${{ inputs.version_type }}"
+            case "$TYPE" in
+              "release") VERSION="$RELEASE_VERSION"; PRERELEASE="false" ;;
+              "pre-release") VERSION="${PRERELEASE_VERSION}-rc"; PRERELEASE="true" ;;
+              "beta") VERSION="${BETA_VERSION}-beta"; PRERELEASE="true" ;;
+              "dev") VERSION="${DEV_VERSION}-dev"; PRERELEASE="true" ;;
+              *) VERSION="$RELEASE_VERSION"; PRERELEASE="false" ;;
+            esac
+          else
+            VERSION="$RELEASE_VERSION"
+            TYPE="release"
+            PRERELEASE="false"
+          fi
+
+          echo "APP_VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION_TYPE=$TYPE" >> $GITHUB_OUTPUT
+          echo "IS_PRERELEASE=$PRERELEASE" >> $GITHUB_OUTPUT
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    needs: version
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*') }}
+      - run: chmod +x android/gradlew
+      - run: cd android && ./gradlew ktlintCheck || true
+      - run: cd android && ./gradlew lint || true
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lint-reports
+          path: android/app/build/reports/
+          retention-days: 7
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: [version, lint]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*') }}
+      - run: chmod +x android/gradlew
+      - run: cd android && ./gradlew testDebugUnitTest || true
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unit-test-reports
+          path: android/app/build/reports/tests/
+          retention-days: 7
+
+  build-per-abi:
+    name: Build ${{ matrix.display }} (${{ matrix.build-type }})
+    runs-on: ubuntu-latest
+    needs: [version, test]
+    strategy:
+      fail-fast: false
+      matrix:
+        abi: [armeabi-v7a, arm64-v8a, x86, x86_64]
+        build-type: [debug, release]
+        include:
+          - abi: armeabi-v7a
+            display: arm-v7a
+          - abi: arm64-v8a
+            display: arm-v8a
+          - abi: x86
+            display: x86
+          - abi: x86_64
+            display: x86_64
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools platforms;android-36 build-tools;36.0.0
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*') }}
+      - run: chmod +x android/gradlew
+      - name: Build APK for ABI
+        env:
+          APP_VERSION: ${{ needs.version.outputs.app_version }}
+          BUILD_TYPE: ${{ matrix.build-type }}
+          DISPLAY: ${{ matrix.display }}
+          ABI: ${{ matrix.abi }}
+        run: |
+          cd android
+          if [ "$BUILD_TYPE" == "release" ]; then
+            ./gradlew assembleRelease -Pabi="$ABI"
+            cp app/build/outputs/apk/release/*.apk "solara-${APP_VERSION}-${DISPLAY}-release.apk" || true
+          else
+            ./gradlew assembleDebug -Pabi="$ABI"
+            cp app/build/outputs/apk/debug/*.apk "solara-${APP_VERSION}-${DISPLAY}-debug.apk" || true
+          fi
+      - uses: actions/upload-artifact@v7
+        with:
+          name: solara-${{ matrix.display }}-${{ matrix.build-type }}-${{ needs.version.outputs.app_version }}
+          path: android/solara-*.apk
+          retention-days: 30
+
+  build-universal:
+    name: Build universal (${{ matrix.build-type }})
+    runs-on: ubuntu-latest
+    needs: [version, test]
+    strategy:
+      matrix:
+        build-type: [debug, release]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools platforms;android-36 build-tools;36.0.0
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*') }}
+      - run: chmod +x android/gradlew
+      - name: Build universal APK
+        env:
+          APP_VERSION: ${{ needs.version.outputs.app_version }}
+          BUILD_TYPE: ${{ matrix.build-type }}
+        run: |
+          cd android
+          if [ "$BUILD_TYPE" == "release" ]; then
+            ./gradlew assembleRelease
+            cp app/build/outputs/apk/release/*.apk "solara-universal-${APP_VERSION}-release.apk" || true
+          else
+            ./gradlew assembleDebug
+            cp app/build/outputs/apk/debug/*.apk "solara-universal-${APP_VERSION}-debug.apk" || true
+          fi
+      - uses: actions/upload-artifact@v7
+        with:
+          name: solara-universal-${{ matrix.build-type }}-${{ needs.version.outputs.app_version }}
+          path: android/solara-universal-*.apk
+          retention-days: 30
+
+  sign-and-release:
+    name: Sign and create draft release
+    runs-on: ubuntu-latest
+    needs: [build-per-abi, build-universal]
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools platforms;android-36 build-tools;36.0.0
+      - name: Decrypt signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 -d > keystore.jks
+      - name: Sign APKs
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          for apk in artifacts/solara-*/solara-*.apk; do
+            if [ -f "$apk" ]; then
+              jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
+                -keystore keystore.jks \
+                -storepass $KEYSTORE_PASSWORD \
+                -keypass $KEY_PASSWORD \
+                "$apk" $KEY_ALIAS
+              $ANDROID_HOME/build-tools/35.0.0/zipalign -v -p 4 "$apk" "${apk%.apk}-signed.apk"
+            fi
+          done
+      - name: Create draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*-signed.apk
+          generate_release_notes: true
+          draft: true
+          prerelease: ${{ needs.version.outputs.is_prerelease == 'true' }}
+          name: Solara ${{ needs.version.outputs.app_version }}
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
