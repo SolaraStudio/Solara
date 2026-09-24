@@ -173,7 +173,7 @@ For larger changes, open an issue first so we can align on the approach before y
 1. Fork the repository.
 2. Create a feature branch.
 3. Make your changes, with tests where reasonable.
-4. Run ./gradlew check locally.
+4. Run `./gradlew check` locally.
 5. Open a pull request.
 
 ---
@@ -182,12 +182,12 @@ For larger changes, open an issue first so we can align on the approach before y
 
 Repository | Purpose |
 |----------|---------|
-| Solaria | Android browser for older devices |
-| Optima | Rendering engine (Rust) |
-| Solarium | JavaScript engine (Zig) |
-| Solarian | Search provider API (Kotlin) |
-| web | Website |
-| docs | Documentation |
+| [Solaria](https://github.com/SolaraStudio/Solaria) | Android browser for older devices |
+| [Optima](https://github.com/SolaraStudio/Optima) | Rendering - engine (Rust) |
+| [Solarium](https://github.com/SolaraStudio/Solarium) | Runtime - engine (Zig) |
+| [Solarian](https://github.com/SolaraStudio/Solarian) | Search provider API (Kotlin) |
+| [web](https://github.com/SolaraStudio/web) | Website |
+| [docs](https://github.com/SolaraStudio/docs) | Documentation |
 
 ---
 
@@ -195,16 +195,16 @@ Repository | Purpose |
 
 Solara stands on the work of others:
 
-- Jetpack Compose — declarative UI toolkit
-- Material 3 — design system
-- Hilt — dependency injection
-- Room — persistence
+- [Jetpack Compose](https://developer.android.com/jetpack/compose) — declarative UI toolkit
+- [Material 3](https://m3.material.io) — design system
+- [Hilt](https://dagger.dev/hilt) — dependency injection
+- [Room](https://developer.android.com/training/data-storage/room) — persistence
 
 And the engines that make it a browser:
 
-- Optima — rendering
-- Solarium — JavaScript
-- Solarian — search
+- [Optima](https://github.com/SolaraStudio/Optima) — rendering
+- [Solarium](https://github.com/SolaraStudio/Solarium) — runtime
+- [Solarian](https://github.com/SolaraStudio/Solarian) — search
 
 ---
 
