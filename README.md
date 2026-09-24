@@ -35,9 +35,9 @@ Solara is a thin Android shell around two native engines.
 | 8. Surface | SurfaceView | Android | GPU-backed render target |
 
 
-- Optima — rendering engine. Rust. [repo](https://github.com/SolaraStudio/Optima)
-- Solarium — JavaScript runtime. Zig. [repo](https://github.com/SolaraStudio/Solarium)
-- Solarian — search provider API. Kotlin. [repo](https://github.com/SolaraStudio/Solarian)
+- [Optima](https://github.com/SolaraStudio/Optima) — rendering engine. Rust.
+- [Solarium](https://github.com/SolaraStudio/Solarium) — runtime engine. Zig.
+- [Solarian](https://github.com/SolaraStudio/Solarian) — search provider API. Kotlin.
 
 Solara itself does not implement HTML, CSS, or JavaScript. It provides the UI shell, state management, and native integration.
 
