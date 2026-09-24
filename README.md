@@ -180,17 +180,18 @@ The process:
 
 ## Related repositories
 
-Repository Purpose
-Solaria Android browser for older devices
-Optima Rendering engine (Rust)
-Solarium JavaScript engine (Zig)
-Solarian Search provider API (Kotlin)
-web Website
-docs Documentation
+Repository | Purpose |
+|----------|---------|
+| Solaria | Android browser for older devices |
+| Optima | Rendering engine (Rust) |
+| Solarium | JavaScript engine (Zig) |
+| Solarian | Search provider API (Kotlin) |
+| web | Website |
+| docs | Documentation |
 
 ---
 
-Acknowledgements
+## Acknowledgements
 
 Solara stands on the work of others:
 
