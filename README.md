@@ -24,8 +24,8 @@ Solara is the flagship browser for the SolaraStudio ecosystem. For older devices
 Solara is a thin Android shell around two native engines.
 
 | Layer | Component | Language | Responsibility |
-|-------|-----------|----------|----------------|
-1. UI | Solara UI | Kotlin · Compose | Screens, tabs, toolbar, theme, gesture handling |
+|-------|-----------|----------|----------------
+| 1. UI | Solara UI | Kotlin · Compose | Screens, tabs, toolbar, theme, gesture handling |
 | 2. State | ViewModels | Kotlin · Coroutines | StateFlow, business logic, lifecycle |
 | 3. Data | Repositories | Kotlin | Room, DataStore, caching, preferences |
 | 4. Bridge | JNI Bridge | Kotlin ↔ C ABI Native calls, callbacks, handle table
