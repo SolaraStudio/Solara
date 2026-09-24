@@ -6,7 +6,7 @@ A minimal, privacy-first Android browser. Built with Kotlin and Jetpack Compose,
 
 ## What it is
 
-Solara is a browser for Android that does not rely on Chromium, WebView, or any third-party rendering engine. It uses Optima (our Rust rendering engine) to parse HTML and CSS, Solarium (our Zig JavaScript engine) to run scripts, and Solarian (our Kotlin search API) for search.
+Solara is a browser for Android that does not rely on Chromium, WebView, or any third-party rendering engine. It uses Optima (our Rust rendering engine) to parse HTML and CSS, Solarium (our Zig Runtime engine) to run scripts, and Solarian (our Kotlin search API) for search.
 
 The goal is a browser that is:
 
