@@ -69,14 +69,14 @@ To build Solara you need:
 
 ## Building
 
-Clone
+### Clone
 
 ```bash
 git clone https://github.com/SolaraStudio/Solara.git
 cd Solara
 ```
 
-## Configure credentials
+### Configure credentials
 
 Solara depends on prebuilt Optima artifacts hosted on GitHub Packages. Add your credentials to `~/.gradle/gradle.properties:`
 
@@ -87,26 +87,26 @@ GITHUB_TOKEN=ghp_your_personal_access_token
 
 The token needs the `read:packages` scope.
 
-## Build the app
+### Build the app
 
 ```bash
 cd android
 ./gradlew assembleRelease
 ```
 
-## Output:
+### Output:
 
 ```
-`android/app/build/outputs/apk/release/app-release.apk`
+android/app/build/outputs/apk/release/app-release.apk
 ```
 
-## For a debug build:
+### For a debug build:
 
 ```bash
 ./gradlew assembleDebug
 ```
 
-## Build with a specific ABI
+### Build with a specific ABI
 
 ```bash
 ./gradlew assembleRelease -Pabi=arm64-v8a
@@ -116,7 +116,7 @@ Supported ABIs: `arm64-v8a, armeabi-v7a, x86, x86_64.`
 
 ---
 
-Project structure
+## Project structure
 
 ```
 Solara/
