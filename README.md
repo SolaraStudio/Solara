@@ -76,7 +76,7 @@ git clone https://github.com/SolaraStudio/Solara.git
 cd Solara
 ```
 
-Configure credentials
+## Configure credentials
 
 Solara depends on prebuilt Optima artifacts hosted on GitHub Packages. Add your credentials to `~/.gradle/gradle.properties:`
 
