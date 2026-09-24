@@ -87,26 +87,26 @@ GITHUB_TOKEN=ghp_your_personal_access_token
 
 The token needs the `read:packages` scope.
 
-Build the app
+## Build the app
 
 ```bash
 cd android
 ./gradlew assembleRelease
 ```
 
-Output:
+## Output:
 
 ```
-android/app/build/outputs/apk/release/app-release.apk
+`android/app/build/outputs/apk/release/app-release.apk`
 ```
 
-For a debug build:
+## For a debug build:
 
 ```bash
 ./gradlew assembleDebug
 ```
 
-Build with a specific ABI
+## Build with a specific ABI
 
 ```bash
 ./gradlew assembleRelease -Pabi=arm64-v8a
@@ -140,7 +140,7 @@ Solara/
 
 ---
 
-Configuration
+## Configuration
 
 Settings are exposed in the app itself. For development, the following environment variables are recognised during build:
 
@@ -152,7 +152,7 @@ Settings are exposed in the app itself. For development, the following environme
 
 ---
 
-Testing
+## Testing
 
 ```bash
 cd android
@@ -164,11 +164,11 @@ cd android
 
 ## Contributing
 
-Contributions are welcome. Before starting, please read CONTRIBUTING.md.
+Contributions are welcome. Before starting, please read `CONTRIBUTING.md.`
 
 For larger changes, open an issue first so we can align on the approach before you write code.
 
-The process:
+### The process:
 
 1. Fork the repository.
 2. Create a feature branch.
