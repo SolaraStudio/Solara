@@ -1,12 +1,7 @@
 # Android
 *.apk
 *.aab
-*.keystore
-*.jks
 local.properties
-*.iml
-.idea/
-.gradle/
 build/
 android/build/
 android/app/build/
@@ -18,44 +13,36 @@ android/app/debug/
 *.jar
 !**/gradle-wrapper.jar
 
+# Gradle
+.gradle/
+gradle.properties
+
 # IDE
+.idea/
+*.iml
 .vscode/
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
-*.bak
+captures/
+.externalNativeBuild/
+.cxx/
 
-# Logs
-*.log
-
-# Gradle wrapper (keep the JAR, ignore others)
-!gradle/wrapper/gradle-wrapper.jar
+# Signing
+*.jks
+*.keystore
+*.keystore.b64
 
 # Environment
 .env
 .env.local
 .env.*.local
 
-# Version file (optional)
+# Misc
+*.log
+*.swp
+*.swo
+*.bak
+.DS_Store
+Thumbs.db
 version.txt
-*.keystore
-*.keystore.b64
-
-# Local Gradle properties (NEVER commit — may contain tokens)
-local.properties
-gradle.properties
-
-# Keystores (signing)
-*.jks
-*.keystore
 
 # Termux
-~/.termux/
-
-# Android Studio / IntelliJ
-.idea/
-*.iml
-captures/
-.externalNativeBuild/
-.cxx/
+.termux/
