@@ -1,0 +1,35 @@
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/SolaraStudio/Optima")
+            credentials {
+                username = providers.gradleProperty("GITHUB_ACTOR").orNull
+                    ?: System.getenv("GITHUB_ACTOR")
+                password = providers.gradleProperty("GITHUB_TOKEN").orNull
+                    ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
+rootProject.name = "Solara"
+include(":app")

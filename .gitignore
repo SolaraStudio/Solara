@@ -16,6 +16,7 @@ android/app/debug/
 # Kotlin
 *.class
 *.jar
+!**/gradle-wrapper.jar
 
 # IDE
 .vscode/
@@ -40,3 +41,21 @@ Thumbs.db
 version.txt
 *.keystore
 *.keystore.b64
+
+# Local Gradle properties (NEVER commit — may contain tokens)
+local.properties
+gradle.properties
+
+# Keystores (signing)
+*.jks
+*.keystore
+
+# Termux
+~/.termux/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
