@@ -18,7 +18,7 @@ jvmTarget = "17"
 
 # AndroidX core
 coreKtx = "1.15.0"
-appcompat = "1.7.0"
+appcompat = "1.8.0"
 activityCompose = "1.9.3"
 lifecycle = "2.8.7"
 
