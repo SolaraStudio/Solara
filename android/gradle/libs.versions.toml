@@ -30,7 +30,7 @@ coroutines = "1.9.0"
 
 # Dependency injection
 hilt = "2.52"
-hiltNavigationCompose = "1.2.0"
+hiltNavigationCompose = "1.4.0"
 
 # Persistence
 room = "2.6.1"
