@@ -1,0 +1,13 @@
+name: Cache Gradle
+description: Cache Gradle caches and wrapper for faster builds
+runs:
+  using: composite
+  steps:
+    - uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-

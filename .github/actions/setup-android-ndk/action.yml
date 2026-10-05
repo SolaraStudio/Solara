@@ -1,0 +1,19 @@
+name: Setup Android NDK
+description: Install the Android NDK for native builds
+inputs:
+  ndk-version:
+    description: NDK version
+    required: false
+    default: '28.2.13676358'
+runs:
+  using: composite
+  steps:
+    - id: setup-ndk
+      uses: nttld/setup-ndk@v1
+      with:
+        ndk-version: ${{ inputs.ndk-version }}
+        add-to-path: true
+    - shell: bash
+      run: |
+        echo "ANDROID_NDK_HOME=${{ steps.setup-ndk.outputs.ndk-path }}" >> $GITHUB_ENV
+        echo "ANDROID_NDK_ROOT=${{ steps.setup-ndk.outputs.ndk-path }}" >> $GITHUB_ENV
