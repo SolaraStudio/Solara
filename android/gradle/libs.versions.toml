@@ -26,7 +26,7 @@ lifecycle = "2.8.7"
 composeBom = "2024.11.00"
 
 # Coroutines
-coroutines = "1.9.0"
+coroutines = "1.11.0"
 
 # Dependency injection
 hilt = "2.52"
